@@ -16,6 +16,9 @@ public class MemSharpuBlaze
         bot.Options.SafeTimings = true;
         bot.Options.RestPackets = true;
         bot.Options.SkipCutscenes = true;
+        bot.Skills.StartTimer();
+        bot.Skills.StartSkills("skills/Generic.xml");
+
     Check:
         if (bot.Inventory.Contains("Shurpu Blaze Token", 300))
         {

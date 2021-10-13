@@ -16,6 +16,9 @@ public class NoMemGlaceraIce
         bot.Options.SafeTimings = true;
         bot.Options.RestPackets = true;
         bot.Options.SkipCutscenes = true;
+        bot.Skills.StartTimer();
+        bot.Skills.StartSkills("skills/Generic.xml");
+
     Check:
         if (bot.Inventory.Contains("Glacera Ice Token", 300))
         {

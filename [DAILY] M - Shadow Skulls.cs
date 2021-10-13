@@ -16,6 +16,8 @@ public class ShadowSkulls
         bot.Options.ExitCombatBeforeQuest = true;
         bot.Options.InfiniteRange = true;
         bot.Options.SkipCutscenes = true;
+        bot.Skills.StartTimer();
+        bot.Skills.StartSkills("skills/Generic.xml");
 
     Checks:
         if (!bot.Quests.IsAvailable(492))
