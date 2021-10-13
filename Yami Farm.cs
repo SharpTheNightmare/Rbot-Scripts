@@ -1,21 +1,23 @@
 using RBot;
 
-public class Script
+public class Yami
 {
+	public ScriptInterface bot;
 
-	public void ScriptMain(ScriptInterface bot)
+	public void ScriptMain(ScriptInterface Bot)
 	{
-		bot.Options.SafeTimings = true;
-		bot.Options.RestPackets = true;
-		bot.Options.ExitCombatBeforeQuest = true;
+		bot = Bot;
+		Bot.Options.SafeTimings = true;
+		Bot.Options.RestPackets = true;
+		Bot.Options.ExitCombatBeforeQuest = true;
 
-		bot.Skills.StartTimer();
-		bot.Skills.StartSkills("skills/Generic.xml");
+		Bot.Skills.StartTimer();
+		Bot.Skills.StartSkills("skills/Generic.xml");
 
-		YamiFarm(bot);
+		YamiFarm();
 	}
 
-	public void YamiFarm(ScriptInterface bot)
+	public void YamiFarm()
 	{
 		bot.Player.Join("darkally");
 
@@ -26,7 +28,7 @@ public class Script
 			bot.Player.HuntForItem("Dark Makai|Underworld Golem|Shadow|Legion Defector|Creeping Shadow", "Dark Wisp", 444);
 
 			bot.Quests.EnsureComplete(7409);
-			
+
 			bot.Wait.ForDrop("Yami");
 
 			bot.Player.Pickup("Yami");
