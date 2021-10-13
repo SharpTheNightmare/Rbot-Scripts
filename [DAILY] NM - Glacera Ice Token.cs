@@ -47,7 +47,7 @@ public class NoMemGlaceraIce
         bot.Player.Pickup("Glacera Ice Token");
     End:
         bot.Player.Pickup("Glacera Ice Token");
-        if (!bot.Quests.CanComplete(questId))
+        if (bot.Quests.CanComplete(questId))
         {
             goto Quest;
         }

@@ -46,7 +46,7 @@ public class MemSharpuBlaze
         bot.Player.Pickup("Shurpu Blaze Token");
     End:
         bot.Player.Pickup("Shurpu Blaze Token");
-        if (!bot.Quests.CanComplete(questId))
+        if (bot.Quests.CanComplete(questId))
         {
             goto Quest;
         }
