@@ -35,7 +35,7 @@ public class MemSharpuBlaze
         bot.Player.Join("xancave-999999", "r11", "Left");
         bot.Quests.EnsureAccept(questId);
     RingGuardian:
-        bot.Player.Hunt("Sharpu Ring Guardian");
+        bot.Player.Hunt("Shurpu Ring Guardian");
         if (!bot.Quests.CanComplete(questId))
         {
             goto RingGuardian;
