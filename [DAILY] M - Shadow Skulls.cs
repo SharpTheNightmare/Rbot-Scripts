@@ -20,15 +20,15 @@ public class ShadowSkulls
     Checks:
         if (!bot.Quests.IsAvailable(492))
         {
-            goto End_1028829999;
+            goto End;
         }
         if (bot.Inventory.Contains("Shadow Skull", 30))
         {
-            goto End_1028829999;
+            goto End;
         }
         if (bot.Bank.Contains("Shadow Skull", 30))
         {
-            goto End_1028829999;
+            goto End;
         }
         if (bot.Bank.Contains("Shadow Skull"))
         {
@@ -74,7 +74,7 @@ public class ShadowSkulls
         {
             bot.Player.Pickup("Shadow Skull");
         }
-    End_1028829999:
+    End:
         if (bot.Player.DropExists("Shadow Skull"))
         {
             bot.Player.Pickup("Shadow Skull");
