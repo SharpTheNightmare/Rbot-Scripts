@@ -55,7 +55,7 @@ public class ShadowSkulls
             {
                 bot.Player.Join("bludrut4-999999", "r14", "Left");
             }
-            bot.Player.Kill("*");
+            bot.Player.HuntForItem("Shadow Serpent", "Shadow Scales", 5, true);
         }
     Map:
         if (bot.Quests.CanComplete(492))
