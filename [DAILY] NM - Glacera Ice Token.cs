@@ -30,6 +30,8 @@ public class NoMemGlaceraIce
         }
         if (bot.Bank.Contains("Glacera Ice Token"))
         {
+            bot.Player.LoadBank();
+            bot.Wait.ForBankLoad();
             bot.Bank.ToInventory("Glacera Ice Token");
         }
         bot.Player.Join("northstar-999999", "Enter", "Spawn");

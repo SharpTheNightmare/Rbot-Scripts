@@ -19,6 +19,8 @@ public class Script
 
     public void ManaGolem()
     {
+        bot.Player.LoadBank();
+        bot.Wait.ForBankLoad();
         bot.Bank.ToInventory("Voucher of Nulgath (non-mem)");
         bot.Bank.ToInventory("Voucher of Nulgath");
         bot.Bank.ToInventory("Gem of Nulgath");

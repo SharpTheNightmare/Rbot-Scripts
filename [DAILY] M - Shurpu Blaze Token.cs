@@ -30,6 +30,8 @@ public class MemSharpuBlaze
         }
         if (bot.Bank.Contains("Shurpu Blaze Token"))
         {
+            bot.Player.LoadBank();
+            bot.Wait.ForBankLoad();
             bot.Bank.ToInventory("Shurpu Blaze Token");
         }
         bot.Player.Join("xancave-999999", "r11", "Left");

@@ -34,6 +34,8 @@ public class ShadowSkulls
         }
         if (bot.Bank.Contains("Shadow Skull"))
         {
+            bot.Player.LoadBank();
+            bot.Wait.ForBankLoad();
             bot.Bank.ToInventory("Shadow Skull");
         }
         if (bot.Quests.IsInProgress(492))
