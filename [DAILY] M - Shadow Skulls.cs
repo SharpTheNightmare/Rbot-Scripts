@@ -1,4 +1,4 @@
-// Converted from 00 m - Shadow Skull
+// Converted from M - Shadow Skull
 // Author: SharpTheNightmare/purple
 // Description: Daily Shadow Skull bot
 
