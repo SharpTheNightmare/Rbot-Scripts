@@ -45,7 +45,6 @@ public class LegionRev2
         bot.Skills.Add(4, 2f);
 
         bot.Player.LoadBank();
-        bot.Inventory.BankAllCoinItems();
 
         bot.Bank.ToInventory("Conquest Wreath");
 
