@@ -23,7 +23,7 @@ public class MemSharpuBlaze
         else
             questId = 2209;
 
-        Check:
+    Check:
         if (bot.Inventory.Contains("Shurpu Blaze Token", 300))
         {
             goto End;
