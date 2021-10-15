@@ -1,7 +1,7 @@
 using RBot;
 using RBot.Monsters;
 
-public class LegionRev2
+public class LegionFealty2
 {
     public string[] enemy = {
         "Mummy",
