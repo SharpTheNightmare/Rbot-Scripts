@@ -20,6 +20,8 @@ public class ShadowSkulls
         bot.Skills.StartSkills("Skills/Generic.xml");
 
     Checks:
+        if (!bot.Player.IsMember)
+            goto End;
         if (!bot.Quests.IsAvailable(492))
         {
             goto End;

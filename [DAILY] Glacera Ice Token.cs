@@ -9,7 +9,7 @@ public class MemGlaceraIce
     public string OptionsStorage = "SharpTheNightmare M - Glacera Ice Token";
     public bool DontPreconfigure = true;
 
-    public int questId = 3965;
+    public int questId;
 
     public void ScriptMain(ScriptInterface bot)
     {
@@ -18,6 +18,10 @@ public class MemGlaceraIce
         bot.Options.SkipCutscenes = true;
         bot.Skills.StartTimer();
         bot.Skills.StartSkills("Skills/Generic.xml");
+        if (bot.Player.IsMember)
+            questId = 3965;
+        else
+            questId = 3966;
 
     Check:
         if (bot.Inventory.Contains("Glacera Ice Token", 300))
