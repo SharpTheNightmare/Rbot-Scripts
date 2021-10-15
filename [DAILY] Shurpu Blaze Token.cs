@@ -9,7 +9,7 @@ public class MemSharpuBlaze
     public string OptionsStorage = "SharpTheNightmare M - Shurpu Blaze Token";
     public bool DontPreconfigure = true;
 
-    public int questId = 2210;
+    public int questId;
 
     public void ScriptMain(ScriptInterface bot)
     {
@@ -18,8 +18,12 @@ public class MemSharpuBlaze
         bot.Options.SkipCutscenes = true;
         bot.Skills.StartTimer();
         bot.Skills.StartSkills("Skills/Generic.xml");
+        if (bot.Player.IsMember)
+            questId = 2210;
+        else
+            questId = 2209;
 
-    Check:
+        Check:
         if (bot.Inventory.Contains("Shurpu Blaze Token", 300))
         {
             goto End;
