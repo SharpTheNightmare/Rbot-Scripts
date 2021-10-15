@@ -10,6 +10,7 @@ public class NulgathLarvae
         Bot.Options.SafeTimings = true;
         Bot.Options.RestPackets = true;
         Bot.Options.ExitCombatBeforeQuest = true;
+        Bot.Options.InfiniteRange = true;
 
         Bot.Skills.StartTimer();
         bot.Skills.StartSkills("Skills/Generic.xml");

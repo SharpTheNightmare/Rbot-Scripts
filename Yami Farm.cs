@@ -10,6 +10,7 @@ public class Yami
 		Bot.Options.SafeTimings = true;
 		Bot.Options.RestPackets = true;
 		Bot.Options.ExitCombatBeforeQuest = true;
+		bot.Options.InfiniteRange = true;
 
 		Bot.Skills.StartTimer();
 		Bot.Skills.StartSkills("skills/Generic.xml");
