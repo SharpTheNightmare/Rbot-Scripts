@@ -1,5 +1,5 @@
 // Converted from M - Glacera Ice Token
-// Author: SharpTheNightmare/purple
+// Author: SharpTheNightmare
 // Description: daily mem glacera ice tokens bot
 
 using RBot;
@@ -17,7 +17,7 @@ public class MemGlaceraIce
         bot.Options.RestPackets = true;
         bot.Options.SkipCutscenes = true;
         bot.Skills.StartTimer();
-        bot.Skills.StartSkills("skills/Generic.xml");
+        bot.Skills.StartSkills("Skills/Generic.xml");
 
     Check:
         if (bot.Inventory.Contains("Glacera Ice Token", 300))
@@ -31,7 +31,6 @@ public class MemGlaceraIce
         if (bot.Bank.Contains("Glacera Ice Token"))
         {
             bot.Player.LoadBank();
-            bot.Wait.ForBankLoad();
             bot.Bank.ToInventory("Glacera Ice Token");
         }
         bot.Player.Join("northstar-999999", "Enter", "Spawn");

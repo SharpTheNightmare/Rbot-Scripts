@@ -71,7 +71,7 @@ public class LegionRev2
                     bot.Player.Join(map[i]);
 
                     // Do a health check on monsters to modify farming style
-                    if (avgHealth(bot) > 6000) bot.Player.EquipItem("LightCaster"); // Solo class for strong units
+                    if (AvgHealth(bot) > 6000) bot.Player.EquipItem("LightCaster"); // Solo class for strong units
                     else bot.Player.EquipItem("Infinite Legion Dark Caster");       // Farming class for weak units
 
                     // Hunt for the enemy(s) in the map
@@ -102,7 +102,7 @@ public class LegionRev2
         bot.Player.Join("yulgar");
     }
 
-    public double avgHealth(ScriptInterface bot)
+    public double AvgHealth(ScriptInterface bot)
     {
         double avg = 0;
         int count = bot.Monsters.CurrentMonsters.Count;

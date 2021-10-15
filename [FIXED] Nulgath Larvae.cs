@@ -1,6 +1,6 @@
 ﻿using RBot;
 
-public class Script
+public class NulgathLarvae
 {
     public ScriptInterface bot;
 
@@ -12,7 +12,7 @@ public class Script
         Bot.Options.ExitCombatBeforeQuest = true;
 
         Bot.Skills.StartTimer();
-        Bot.Skills.StartSkills("skills/Generic.xml");
+        bot.Skills.StartSkills("Skills/Generic.xml");
 
         ManaGolem();
     }
@@ -20,7 +20,6 @@ public class Script
     public void ManaGolem()
     {
         bot.Player.LoadBank();
-        bot.Wait.ForBankLoad();
         bot.Bank.ToInventory("Voucher of Nulgath (non-mem)");
         bot.Bank.ToInventory("Voucher of Nulgath");
         bot.Bank.ToInventory("Gem of Nulgath");

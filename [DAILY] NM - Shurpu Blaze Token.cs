@@ -1,5 +1,5 @@
 // Converted from M - Shurpu Blaze Token
-// Author: SharpTheNightmare/purple
+// Author: SharpTheNightmare
 // Description: daily mem sharpu blaze tokens bot
 
 using RBot;
@@ -17,7 +17,7 @@ public class NoMemSharpuBlaze
         bot.Options.RestPackets = true;
         bot.Options.SkipCutscenes = true;
         bot.Skills.StartTimer();
-        bot.Skills.StartSkills("skills/Generic.xml");
+        bot.Skills.StartSkills("Skills/Generic.xml");
 
     Check:
         if (bot.Inventory.Contains("Shurpu Blaze Token", 300))
@@ -31,7 +31,6 @@ public class NoMemSharpuBlaze
         if (bot.Bank.Contains("Shurpu Blaze Token"))
         {
             bot.Player.LoadBank();
-            bot.Wait.ForBankLoad();
             bot.Bank.ToInventory("Shurpu Blaze Token");
         }
         bot.Player.Join("xancave-999999", "r11", "Left");

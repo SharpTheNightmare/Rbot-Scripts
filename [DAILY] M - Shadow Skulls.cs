@@ -1,5 +1,5 @@
 // Converted from M - Shadow Skull
-// Author: SharpTheNightmare/purple
+// Author: SharpTheNightmare
 // Description: Daily Shadow Skull bot
 
 using RBot;
@@ -17,7 +17,7 @@ public class ShadowSkulls
         bot.Options.InfiniteRange = true;
         bot.Options.SkipCutscenes = true;
         bot.Skills.StartTimer();
-        bot.Skills.StartSkills("skills/Generic.xml");
+        bot.Skills.StartSkills("Skills/Generic.xml");
 
     Checks:
         if (!bot.Quests.IsAvailable(492))
@@ -35,7 +35,6 @@ public class ShadowSkulls
         if (bot.Bank.Contains("Shadow Skull"))
         {
             bot.Player.LoadBank();
-            bot.Wait.ForBankLoad();
             bot.Bank.ToInventory("Shadow Skull");
         }
         if (bot.Quests.IsInProgress(492))
