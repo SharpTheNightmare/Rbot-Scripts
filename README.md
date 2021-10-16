@@ -1,3 +1,5 @@
 # Rbot-Scripts
 
-repo for all my rbots
+repo SharpTheNightmare/purple, Bluu, and TakeMyHeart
+
+
