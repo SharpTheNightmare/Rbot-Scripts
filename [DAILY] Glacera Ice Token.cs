@@ -9,7 +9,7 @@ public class GlaceraIce
     public string OptionsStorage = "SharpTheNightmare M - Glacera Ice Token";
     public bool DontPreconfigure = true;
 
-    public string map = "northstar-999999";
+    public string map = "northstar";
 
     public int questId;
 
@@ -46,7 +46,7 @@ public class GlaceraIce
         }
 
     JoinMap:
-        bot.Player.Join(map, "Enter", "Spawn");
+        bot.Player.Join($"{map}-999999", "Enter", "Spawn");
         bot.Quests.EnsureAccept(questId);
 
     FrostInvader:

@@ -24,42 +24,28 @@ public class ShadowSkulls
             goto End;
 
         if (bot.Quests.IsInProgress(492))
-        {
             goto Main;
-        }
 
         if (!bot.Quests.IsAvailable(492))
-        {
             goto Quest;
-        }
 
         if (bot.Inventory.Contains("Shadow Skull", 30))
-        {
             goto End;
-        }
 
         bot.Player.LoadBank();
         if (bot.Bank.Contains("Shadow Skull", 30))
-        {
             goto End;
-        }
 
         if (bot.Bank.Contains("Shadow Skull"))
-        {
             bot.Bank.ToInventory("Shadow Skull");
-        }
 
     Main:
         if (bot.Quests.IsAvailable(492))
         {
             if (!bot.Quests.IsInProgress(492))
-            {
                 bot.Quests.EnsureAccept(492);
-            }
             if (bot.Map.Name != "bludrut4")
-            {
                 bot.Player.Join("bludrut4-999999", "r14", "Left");
-            }
             bot.Player.HuntForItem("Shadow Serpent", "Shadow Scales", 5, true);
         }
 

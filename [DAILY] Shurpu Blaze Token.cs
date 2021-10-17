@@ -9,7 +9,7 @@ public class SharpuBlaze
     public string OptionsStorage = "SharpTheNightmare M - Shurpu Blaze Token";
     public bool DontPreconfigure = true;
 
-    public string map = "xancave-999999";
+    public string map = "xancave";
 
     public int questId;
 
@@ -46,7 +46,7 @@ public class SharpuBlaze
         }
 
     JoinMap:
-        bot.Player.Join(map, "r11", "Left");
+        bot.Player.Join($"{map}-999999", "r11", "Left");
         bot.Quests.EnsureAccept(questId);
 
     RingGuardian:
