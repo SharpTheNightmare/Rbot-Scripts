@@ -22,32 +22,34 @@ public class ShadowSkulls
     Checks:
         if (!bot.Player.IsMember)
             goto End;
-        if (!bot.Quests.IsAvailable(492))
-        {
-            goto End;
-        }
-        if (bot.Inventory.Contains("Shadow Skull", 30))
-        {
-            goto End;
-        }
-        if (bot.Bank.Contains("Shadow Skull", 30))
-        {
-            goto End;
-        }
-        if (bot.Bank.Contains("Shadow Skull"))
-        {
-            bot.Player.LoadBank();
-            bot.Bank.ToInventory("Shadow Skull");
-        }
+
         if (bot.Quests.IsInProgress(492))
         {
             goto Main;
         }
-    Main:
-        if (bot.Player.DropExists("Shadow Skull"))
+
+        if (!bot.Quests.IsAvailable(492))
         {
-            bot.Player.Pickup("Shadow Skull");
+            goto Quest;
         }
+
+        if (bot.Inventory.Contains("Shadow Skull", 30))
+        {
+            goto End;
+        }
+
+        bot.Player.LoadBank();
+        if (bot.Bank.Contains("Shadow Skull", 30))
+        {
+            goto End;
+        }
+
+        if (bot.Bank.Contains("Shadow Skull"))
+        {
+            bot.Bank.ToInventory("Shadow Skull");
+        }
+
+    Main:
         if (bot.Quests.IsAvailable(492))
         {
             if (!bot.Quests.IsInProgress(492))
@@ -60,29 +62,34 @@ public class ShadowSkulls
             }
             bot.Player.HuntForItem("Shadow Serpent", "Shadow Scales", 5, true);
         }
-    Map:
+
         if (bot.Quests.CanComplete(492))
         {
             goto Quest;
         }
+
         if (!bot.Inventory.ContainsTempItem("Shadow Scales", 5))
         {
             goto Main;
         }
+
         if (bot.Quests.IsAvailable(492))
         {
             goto Main;
         }
+
     Quest:
-        bot.Quests.EnsureComplete(492);
-        if (bot.Player.DropExists("Shadow Skull"))
+        if(bot.Quests.CanComplete(492))
         {
-            bot.Player.Pickup("Shadow Skull");
+            bot.Quests.EnsureComplete(492);
         }
+        bot.Player.Pickup("Shadow Skull");
+
     End:
-        if (bot.Player.DropExists("Shadow Skull"))
+        bot.Player.Pickup("Shadow Skull");
+        if (bot.Quests.IsAvailable(492))
         {
-            bot.Player.Pickup("Shadow Skull");
+            goto Checks;
         }
         ScriptManager.StopScript();
     }

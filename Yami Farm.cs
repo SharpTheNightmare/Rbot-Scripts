@@ -13,7 +13,7 @@ public class Yami
 		bot.Options.InfiniteRange = true;
 
 		Bot.Skills.StartTimer();
-		Bot.Skills.StartSkills("skills/Generic.xml");
+		Bot.Skills.StartSkills("Skills/Generic.xml");
 
 		YamiFarm();
 	}

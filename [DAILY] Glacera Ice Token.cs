@@ -4,10 +4,12 @@
 
 using RBot;
 
-public class MemGlaceraIce
+public class GlaceraIce
 {
     public string OptionsStorage = "SharpTheNightmare M - Glacera Ice Token";
     public bool DontPreconfigure = true;
+
+    public string map = "northstar-999999";
 
     public int questId;
 
@@ -18,33 +20,44 @@ public class MemGlaceraIce
         bot.Options.SkipCutscenes = true;
         bot.Skills.StartTimer();
         bot.Skills.StartSkills("Skills/Generic.xml");
+
+    Checks:
         if (bot.Player.IsMember)
             questId = 3965;
         else
             questId = 3966;
 
-    Check:
+        if (!bot.Quests.IsAvailable(questId))
+            goto End;
+
+        if (bot.Quests.IsInProgress(questId))
+            goto FrostInvader;
+
         if (bot.Inventory.Contains("Glacera Ice Token", 300))
-        {
             goto End;
-        }
+
+        bot.Player.LoadBank();
         if (bot.Bank.Contains("Glacera Ice Token", 300))
-        {
             goto End;
-        }
+
         if (bot.Bank.Contains("Glacera Ice Token"))
         {
-            bot.Player.LoadBank();
             bot.Bank.ToInventory("Glacera Ice Token");
         }
-        bot.Player.Join("northstar-999999", "Enter", "Spawn");
+
+    JoinMap:
+        bot.Player.Join(map, "Enter", "Spawn");
         bot.Quests.EnsureAccept(questId);
+
     FrostInvader:
+        if (bot.Map.Name != map)
+            goto JoinMap;
+
         bot.Player.HuntForItem("Frost Invader", "Dark Ice", 1, true);
+
         if (!bot.Quests.CanComplete(questId))
-        {
             goto FrostInvader;
-        }
+
         bot.Player.Jump("Blank", "Center");
         bot.Sleep(1000);
     Quest:
@@ -53,13 +66,13 @@ public class MemGlaceraIce
     End:
         bot.Player.Pickup("Glacera Ice Token");
         if (bot.Quests.CanComplete(questId))
-        {
             goto Quest;
-        }
+
+        if (bot.Quests.IsAvailable(questId))
+            goto Checks;
+
         if (bot.Inventory.Contains("Glacera Ice Token"))
-        {
             bot.Inventory.ToBank("Glacera Ice Token");
-        }
         ScriptManager.StopScript();
     }
 }
