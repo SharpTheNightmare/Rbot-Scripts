@@ -7,7 +7,7 @@ public class ShadowSkulls
 {
 	//-----------EDIT BELOW-------------//
 	public int MapNumber = 694200;
-	public string[] RequiredItems = { "Shurpu Blaze Token" };
+	public string[] RequiredItems = { "Shadow Skull" };
 	public string[] EquippedItems = { };
 	public readonly int[] SkillOrder = { 3, 1, 2, 4 };
 	public int SaveStateLoops = 8700;
