@@ -7,7 +7,7 @@ public class DarkSpiritOrb
 {
 	//-----------EDIT BELOW-------------//
 	public int MapNumber = 694200;
-	public string[] RequiredItems = { };
+	public string[] RequiredItems = { "DoomCoin" };
 	public string[] EquippedItems = { };
 	public readonly int[] SkillOrder = { 3, 1, 2, 4 };
 	public int SaveStateLoops = 8700;
