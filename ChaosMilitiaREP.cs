@@ -1,7 +1,7 @@
 ﻿using System;
 using RBot;
 using System.Collections.Generic;
-public class Script
+public class ChaosMilitiaRep
 {
     //-----------EDIT BELOW-------------//
     public string MapNumber = "69699";
@@ -43,7 +43,7 @@ public class Script
                                                      Invocable Functions
     ------------------------------------------------------------------------------------------------------------*/
 
-    //These functions are used to perform a major action in AQW. 
+    //These functions are used to perform a major action in AQW.
     //All of them require at least one of the Auxilliary Functions listed below to be present in your script.
     //Some of the functions require you to pre-declare certain integers under "public class Script"
     //InvItemFarm and TempItemFarm will require some Background Functions to be present as well.
@@ -145,7 +145,7 @@ public class Script
 
     public void SafePurchase(string ItemName, int ItemQuantityNeeded, string MapName, string MapNumber, int ShopID)
     {
-        //Purchases the specified quantity of the specified item from the specified shop in the specified map. 
+        //Purchases the specified quantity of the specified item from the specified shop in the specified map.
 
         //Must have the following functions in your script:
         //SafeMapJoin
@@ -311,7 +311,7 @@ public class Script
 
     public void SkillList(params int[] Skillset)
     {
-        //Spams Skills when in combat. You can get in combat by going to a cell with monsters in it with bot.Options.AggroMonsters enabled or using an attack command against one. 
+        //Spams Skills when in combat. You can get in combat by going to a cell with monsters in it with bot.Options.AggroMonsters enabled or using an attack command against one.
 
         bot.RegisterHandler(1, b => {
             if (bot.Player.InCombat == true)
