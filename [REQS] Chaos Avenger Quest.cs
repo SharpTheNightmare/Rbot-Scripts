@@ -435,18 +435,40 @@ public class ChaosAvenger
 		bot.Events.PlayerDeath += PD => ScriptManager.RestartScript();
 		bot.Events.PlayerAFK += PA => ScriptManager.RestartScript();
 	}
+	/// <summary>
+	/// Gets AQLite Functions
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="optionName"></param>
+	/// <returns></returns>
+	public T GetLite<T>(string optionName)
+	{
+		return bot.GetGameObject<T>($"litePreference.data.{optionName}");
+	}
+
+	/// <summary>
+	/// Sets AQLite Functions
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="optionName"></param>
+	/// <param name="value"></param>
+	public void SetLite<T>(string optionName, T value)
+	{
+		bot.SetGameObject($"litePreference.data.{optionName}", value);
+	}
 
 	/// <summary>
 	/// Allows you to turn on and off AQLite functions.
 	/// Recommended Default Bot Configurations.
 	/// </summary>
-	public void ConfigureLiteSettings(bool UntargetSelf = true, bool UntargetDead = true, bool CustomDrops = false, bool ReacceptQuest = false, bool SmoothBackground = true)
+	public void ConfigureLiteSettings(bool UntargetSelf = true, bool UntargetDead = true, bool CustomDrops = false, bool ReacceptQuest = false, bool SmoothBackground = true, bool Debugger = false)
 	{
-		bot.Lite.Set("bUntargetSelf", UntargetSelf);
-		bot.Lite.Set("bUntargetDead", UntargetDead);
-		bot.Lite.Set("bCustomDrops", CustomDrops);
-		bot.Lite.Set("bReaccept", ReacceptQuest);
-		bot.Lite.Set("bSmoothBG", SmoothBackground);
+		SetLite("bUntargetSelf", UntargetSelf);
+		SetLite("bUntargetDead", UntargetDead);
+		SetLite("bCustomDrops", CustomDrops);
+		SetLite("bReaccept", ReacceptQuest);
+		SetLite("bSmoothBG", SmoothBackground);
+		SetLite("bDebugger", Debugger);
 	}
 
 	/// <summary>
