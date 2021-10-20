@@ -2,6 +2,9 @@
 using RBot;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using System.Xml;
+using System.IO;
+using System.Linq;
 
 public class ChaosAvenger
 {
@@ -52,88 +55,63 @@ public class ChaosAvenger
 		while (!bot.ShouldExit())
 		{
 			while (!bot.Player.Loaded) { }
-			if (!bot.Inventory.Contains(RequiredItems[1], 1))
-			{
-				InvItemFarm(RequiredItems[1], 1, "chaoslord", "r2", "Left", 8301);
-			}
+			InvItemFarm(RequiredItems[1], 1, "chaoslord", "r2", "Left", 8301);
 
 			if (!bot.Inventory.Contains(RequiredItems[3], 1))
 			{
-				if (!bot.Inventory.Contains(RequiredItems[6], 1))
-				{
-					InvItemFarm(RequiredItems[6], 1, "escherion", "Boss", "Left");
-					bot.Log($"{RequiredItems[6]} acquired.");
-				}
-				if (!bot.Inventory.Contains(RequiredItems[7], 1))
-				{
-					InvItemFarm(RequiredItems[7], 1, "stalagbite", "r2", "Spawn");
-					bot.Log($"{RequiredItems[7]} acquired.");
-				}
-				if (!bot.Inventory.Contains(RequiredItems[8], 1))
-				{
-					InvItemFarm(RequiredItems[8], 1, "kitsune", "Boss", "Left");
-					bot.Log($"{RequiredItems[8]} acquired.");
-				}
-				if (!bot.Inventory.Contains(RequiredItems[9], 1))
-				{
-					InvItemFarm(RequiredItems[9], 1, "wolfwing", "Boss", "Left");
-					bot.Log($"{RequiredItems[9]} acquired.");
-				}
-				if (!bot.Inventory.Contains(RequiredItems[10], 1))
-				{
-					InvItemFarm(RequiredItems[10], 1, "palooza", "Act5", "Right");
-					bot.Log($"{RequiredItems[10]} acquired.");
-				}
-				if (!bot.Inventory.Contains(RequiredItems[11], 1))
-				{
-					InvItemFarm(RequiredItems[11], 1, "legdermayne", "Boss", "Right");
-					bot.Log($"{RequiredItems[11]} acquired.");
-				}
+				InvItemFarm(RequiredItems[6], 1, "escherion", "Boss", "Left");
+				bot.Log($"{RequiredItems[6]} acquired.");
+
+				InvItemFarm(RequiredItems[7], 1, "stalagbite", "r2", "Spawn");
+				bot.Log($"{RequiredItems[7]} acquired.");
+
+				InvItemFarm(RequiredItems[8], 1, "kitsune", "Boss", "Left");
+				bot.Log($"{RequiredItems[8]} acquired.");
+
+				InvItemFarm(RequiredItems[9], 1, "wolfwing", "Boss", "Left");
+				bot.Log($"{RequiredItems[9]} acquired.");
+
+				InvItemFarm(RequiredItems[10], 1, "palooza", "Act5", "Right");
+				bot.Log($"{RequiredItems[10]} acquired.");
+
+				InvItemFarm(RequiredItems[11], 1, "legdermayne", "Boss", "Right");
+				bot.Log($"{RequiredItems[11]} acquired.");
+
 				SafePurchase(RequiredItems[3], 1, "championdrakath", 2055);
 				bot.Log($"{RequiredItems[3]} acquired.");
 			}
 
 			if (!bot.Inventory.Contains(RequiredItems[4], 1))
 			{
-				if (!bot.Inventory.Contains(RequiredItems[12], 1))
-				{
-					InvItemFarm(RequiredItems[12], 1, "djinn", "r6", "Center");
-					bot.Log($"{RequiredItems[12]} acquired.");
-				}
-				if (!bot.Inventory.Contains(RequiredItems[13], 1))
-				{
-					InvItemFarm(RequiredItems[13], 1, "dreamnexus", "r17a", "Right");
-					bot.Log($"{RequiredItems[13]} acquired.");
-				}
-				if (!bot.Inventory.Contains(RequiredItems[14], 1))
-				{
-					InvItemFarm(RequiredItems[14], 1, "timespace", "Frame2", "Left");
-					bot.Log($"{RequiredItems[14]} acquired.");
-				}
-				if (!bot.Inventory.Contains(RequiredItems[15], 1))
-				{
-					InvItemFarm(RequiredItems[15], 1, "stormtemple", "r16", "Left");
-					bot.Log($"{RequiredItems[15]} acquired.");
-				}
-				if (!bot.Inventory.Contains(RequiredItems[16], 1))
-				{
-					InvItemFarm(RequiredItems[16], 1, "swordhavenfalls", "r10", "Left");
-					bot.Log($"{RequiredItems[16]} acquired.");
-				}
-				if (!bot.Inventory.Contains(RequiredItems[17], 1))
-				{
-					InvItemFarm(RequiredItems[17], 1, "mirrorportal", "r4", "Right");
-					bot.Log($"{RequiredItems[17]} acquired.");
-				}
+				InvItemFarm(RequiredItems[12], 1, "djinn", "r6", "Center");
+				bot.Log($"{RequiredItems[12]} acquired.");
+
+				InvItemFarm(RequiredItems[13], 1, "dreamnexus", "r17a", "Right");
+				bot.Log($"{RequiredItems[13]} acquired.");
+
+				InvItemFarm(RequiredItems[14], 1, "timespace", "Frame2", "Left");
+				bot.Log($"{RequiredItems[14]} acquired.");
+
+				InvItemFarm(RequiredItems[15], 1, "stormtemple", "r16", "Left");
+				bot.Log($"{RequiredItems[15]} acquired.");
+
+				InvItemFarm(RequiredItems[16], 1, "swordhavenfalls", "r10", "Left");
+				bot.Log($"{RequiredItems[16]} acquired.");
+
+				InvItemFarm(RequiredItems[17], 1, "mirrorportal", "r4", "Right");
+				bot.Log($"{RequiredItems[17]} acquired.");
+
 				SafePurchase(RequiredItems[4], 1, "championdrakath", 2055);
 				bot.Log($"{RequiredItems[4]} acquired.");
 			}
 
-			if (!bot.Inventory.Contains(RequiredItems[2], 1300))
-			{
-				InvItemFarm(RequiredItems[2], 1, "mountdoomskull", "b1", "Left");
-				bot.Log($"{RequiredItems[2]} acquired.");
-			}
+			bot.Quests.Accept(8094);
+			SendQueenPackets();
+			InvItemFarm(RequiredItems[5], 13, "transformation", "r9", "Left", 8301);
+			bot.Log($"{RequiredItems[5]} acquired.");
+
+			InvItemFarm(RequiredItems[2], 1, "mountdoomskull", "b1", "Left", 8301);
+			bot.Log($"{RequiredItems[2]} acquired.");
 
 			if (bot.Inventory.Contains(RequiredItems[18], 2055))
 			{
@@ -142,8 +120,20 @@ public class ChaosAvenger
 			}
 		}
 		bot.Log($"[{DateTime.Now:HH:mm:ss}] Script stopped successfully.");
-		StopBot("Chaos Avenger Quest completed. (You will not get any 'Fragment of the Queen' from this bot.)");
+		StopBot("Chaos Avenger Quest bot completed.)");
 	}
+
+
+	public void SendQueenPackets()
+	{
+		string data1 = "{\"t\":\"xt\",\"b\":{\"r\":-1,\"o\":{\"cmd\":\"updateQuest\",\"iValue\":27,\"iIndex\":403}}}";
+		string data2 = "{\"t\":\"xt\",\"b\":{\"r\":-1,\"o\":{\"cmd\":\"updateQuest\",\"iValue\":11,\"iIndex\":405}}}";
+		bot.SendClientPacket(data1, "json");
+		bot.SendClientPacket(data2, "json");
+	}
+
+
+
 
 	/*------------------------------------------------------------------------------------------------------------
 													 Invokable Functions
