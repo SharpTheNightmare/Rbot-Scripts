@@ -27,7 +27,6 @@ public class ChaosAvenger
 		"Chaos lord Alteon",
 		"Xiang Chaos",
 		"Champion Drakath Insignia"
-
 	};
 	public string[] EquippedItems = { };
 	public readonly int[] SkillOrder = { 3, 1, 2, 4 };
