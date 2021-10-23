@@ -6,12 +6,14 @@ using System.Windows.Forms;
 public class DarkSpiritOrb
 {
 	//-----------EDIT BELOW-------------//
-	public int MapNumber = 694200;
-	public string[] RequiredItems = { "DoomCoin" };
-	public string[] EquippedItems = { };
+	public int MapNumber = 2142069;
 	public readonly int[] SkillOrder = { 3, 1, 2, 4 };
 	public int SaveStateLoops = 8700;
+	public int TurnInAttempts = 10;
+	public string[] RequiredItems = { "DoomCoin", "Dark Spirit Orb" };
+	public string[] EquippedItems = { };
 	//-----------EDIT ABOVE-------------//
+
 
 	public int FarmLoop;
 	public int SavedState;
@@ -26,14 +28,14 @@ public class DarkSpiritOrb
 		SkillList(SkillOrder);
 		EquipList(EquippedItems);
 		UnbankList(RequiredItems);
+		CheckSpace(RequiredItems);
 		GetDropList(RequiredItems);
 
 		while (!bot.ShouldExit())
 		{
 			while (!bot.Player.Loaded) { }
-
 			InvItemFarm("DoomCoin", 100, "maul", "r2", "Left", 2089);
-			SafeQuestComplete( 2089);
+			SafeQuestComplete(2089);
 		}
 		bot.Log($"[{DateTime.Now:HH:mm:ss}] Script stopped successfully.");
 		StopBot();
@@ -49,8 +51,6 @@ public class DarkSpiritOrb
 		*   Some of the functions require you to pre-declare certain integers under "public class Script"
 		*   InvItemFarm and TempItemFarm will require some Background Functions to be present as well.
 		*   All of this information can be found inside the functions. Make sure to read.
-
-
 		*   InvItemFarm("ItemName", ItemQuantity, "MapName", "MapNumber", "CellName", "PadName", QuestID, "MonsterName");
 		*   TempItemFarm("TempItemName", TempItemQuantity, "MapName", "MapNumber", "CellName", "PadName", QuestID, "MonsterName");
 		*   SafeEquip("ItemName");
@@ -63,9 +63,8 @@ public class DarkSpiritOrb
 	/// <summary>
 	/// Farms you the specified quantity of the specified item with the specified quest accepted from specified monsters in the specified location. Saves States every ~5 minutes.
 	/// </summary>
-	public void InvItemFarm(string ItemName, int ItemQuantity, string MapName, string CellName, string PadName, int QuestID = -1, string MonsterName = "*")
+	public void InvItemFarm(string ItemName, int ItemQuantity, string MapName, string CellName, string PadName, int QuestID = 0, string MonsterName = "*")
 	{
-
 	/*
 		*   Must have the following functions in your script:
 		*   SafeMapJoin
@@ -97,7 +96,7 @@ public class DarkSpiritOrb
 			FarmLoop++;
 			if (bot.Map.Name != MapName) SafeMapJoin(MapName, CellName, PadName);
 			if (bot.Player.Cell != CellName) bot.Player.Jump(CellName, PadName);
-			bot.Quests.EnsureAccept(QuestID);
+			if (QuestID > 0) bot.Quests.EnsureAccept(QuestID);
 			bot.Options.AggroMonsters = true;
 			bot.Player.Attack(MonsterName);
 			if (FarmLoop > SaveStateLoops) goto breakFarmLoop;
@@ -105,11 +104,10 @@ public class DarkSpiritOrb
 	}
 
 	/// <summary>
-	/// Farms you the required quantity of the specified temp item with the specified quest accepted from specified monsters in the specified location.
+	/// Farms you the required quantity of the specified temp item with the specified quest accepted from specified monsters in the specified location. Saves States every ~5 minutes.
 	/// </summary>
-	public void TempItemFarm(string TempItemName, int TempItemQuantity, string MapName, string CellName, string PadName, int QuestID = -1, string MonsterName = "*")
+	public void TempItemFarm(string TempItemName, int TempItemQuantity, string MapName, string CellName, string PadName, int QuestID = 0, string MonsterName = "*")
 	{
-
 	/*
 		*   Must have the following functions in your script:
 		*   SafeMapJoin
@@ -141,10 +139,67 @@ public class DarkSpiritOrb
 			FarmLoop++;
 			if (bot.Map.Name != MapName) SafeMapJoin(MapName, CellName, PadName);
 			if (bot.Player.Cell != CellName) bot.Player.Jump(CellName, PadName);
-			bot.Quests.EnsureAccept(QuestID);
+			if (QuestID > 0) bot.Quests.EnsureAccept(QuestID);
 			bot.Options.AggroMonsters = true;
 			bot.Player.Attack(MonsterName);
 			if (FarmLoop > SaveStateLoops) goto breakFarmLoop;
+		}
+	}
+
+	/// <summary>
+	/// Farms you the specified quantity of the specified item with the specified quest accepted from specified monsters in the specified location. Saves States every ~5 minutes.
+	/// </summary>
+	public void HuntItemFarm(string ItemName, int ItemQuantity, string MapName, bool Temporary = false, int QuestID = 0, string MonsterName = "*")
+	{
+	/*
+		*   Must have the following functions in your script:
+		*   SafeMapJoin
+		*   SmartSaveState
+		*   SkillList
+		*   ExitCombat
+		*   GetDropList OR ItemWhitelist
+		*
+		*   Must have the following commands under public class Script:
+		*   int FarmLoop = 0;
+		*   int SavedState = 0;
+	*/
+
+	startFarmLoop:
+		if (FarmLoop > 0) goto maintainFarmLoop;
+		SavedState++;
+		bot.Log($"[{DateTime.Now:HH:mm:ss}] Started Farming Loop {SavedState}.");
+		goto maintainFarmLoop;
+
+	breakFarmLoop:
+		SmartSaveState();
+		bot.Log($"[{DateTime.Now:HH:mm:ss}] Completed Farming Loop {SavedState}.");
+		FarmLoop = 0;
+		goto startFarmLoop;
+
+	maintainFarmLoop:
+		if (Temporary)
+		{
+			while (!bot.Inventory.ContainsTempItem(ItemName, ItemQuantity))
+			{
+				FarmLoop++;
+				if (bot.Map.Name != MapName) SafeMapJoin(MapName);
+				if (QuestID > 0) bot.Quests.EnsureAccept(QuestID);
+				bot.Options.AggroMonsters = true;
+				bot.Player.Hunt(MonsterName);
+				if (FarmLoop > SaveStateLoops) goto breakFarmLoop;
+			}
+		}
+		else
+		{
+			while (!bot.Inventory.Contains(ItemName, ItemQuantity))
+			{
+				FarmLoop++;
+				if (bot.Map.Name != MapName) SafeMapJoin(MapName);
+				if (QuestID > 0) bot.Quests.EnsureAccept(QuestID);
+				bot.Options.AggroMonsters = true;
+				bot.Player.Hunt(MonsterName);
+				if (FarmLoop > SaveStateLoops) goto breakFarmLoop;
+			}
 		}
 	}
 
@@ -156,7 +211,7 @@ public class DarkSpiritOrb
 		//Must have the following functions in your script:
 		//ExitCombat
 
-		while (!bot.Inventory.IsEquipped(ItemName))
+		while (bot.Inventory.Contains(ItemName) && !bot.Inventory.IsEquipped(ItemName))
 		{
 			ExitCombat();
 			bot.Player.EquipItem(ItemName);
@@ -213,7 +268,7 @@ public class DarkSpiritOrb
 	maintainCompleteLoop:
 		ExitCombat();
 		bot.Quests.EnsureAccept(QuestID);
-		bot.Quests.EnsureComplete(QuestID, ItemID, tries: 3);
+		bot.Quests.EnsureComplete(QuestID, ItemID, tries: TurnInAttempts);
 		if (bot.Quests.IsInProgress(QuestID))
 		{
 			bot.Log($"[{DateTime.Now:HH:mm:ss}] Failed to turn in Quest {QuestID}. Logging out.");
@@ -228,12 +283,11 @@ public class DarkSpiritOrb
 	/// <summary>
 	/// Stops the bot at yulgar if no parameters are set, or your specified map if the parameters are set.
 	/// </summary>
-	public void StopBot(string Text = "Bot stopped successfully.", string MapName = "yulgar", string CellName = "Enter", string PadName = "Spawn")
+	public void StopBot(string Text = "Bot stopped successfully.", string MapName = "yulgar", string CellName = "Enter", string PadName = "Spawn", string Caption = "Stopped")
 	{
 		//Must have the following functions in your script:
 		//SafeMapJoin
 		//ExitCombat
-
 		if (bot.Map.Name != MapName) SafeMapJoin(MapName, CellName, PadName);
 		if (bot.Player.Cell != CellName) bot.Player.Jump(CellName, PadName);
 		bot.Drops.RejectElse = false;
@@ -241,8 +295,9 @@ public class DarkSpiritOrb
 		bot.Options.AggroMonsters = false;
 		bot.Log($"[{DateTime.Now:HH:mm:ss}] Bot stopped successfully.");
 		Console.WriteLine(Text);
-		MessageBox.Show(Text);
+		MessageBox.Show(Text, Caption);
 		bot.Exit();
+		ScriptManager.StopScript();
 	}
 
 	/*------------------------------------------------------------------------------------------------------------
@@ -253,8 +308,6 @@ public class DarkSpiritOrb
 		*   These functions are used to perform small actions in AQW.
 		*   They are usually called upon by the Invokable Functions, but can be used separately as well.
 		*   Make sure to have them loaded if your Invokable Function states that they are required.
-
-
 		*   ExitCombat()
 		*   SmartSaveState()
 		*   SafeMapJoin("MapName", "CellName", "PadName")
@@ -266,7 +319,7 @@ public class DarkSpiritOrb
 	public void ExitCombat()
 	{
 		bot.Options.AggroMonsters = false;
-		bot.Player.Jump(bot.Player.Cell, bot.Player.Pad);
+		bot.Player.Jump("Wait", "Spawn");
 		while (bot.Player.State == 2) { }
 	}
 
@@ -282,7 +335,7 @@ public class DarkSpiritOrb
 	/// <summary>
 	/// Joins the specified map.
 	/// </summary>
-	public void SafeMapJoin(string MapName, string CellName, string PadName)
+	public void SafeMapJoin(string MapName, string CellName = "Enter", string PadName = "Spawn")
 	{
 		//Must have the following functions in your script:
 		//ExitCombat
@@ -317,8 +370,6 @@ public class DarkSpiritOrb
 		*   It is highly recommended to have all these functions present in your script as they are very useful.
 		*   Some Invokable Functions may call or require the assistance of some Background Functions as well.
 		*   These functions are to be run at the very beginning of the bot under public class Script.
-
-
 		*   ConfigureBotOptions("PlayerName", "GuildName", LagKiller, SafeTimings, RestPackets, AutoRelogin, PrivateRooms, InfiniteRange, SkipCutscenes, ExitCombatBeforeQuest)
 		*   ConfigureLiteSettings(UntargetSelf, UntargetDead, CustomDrops, ReacceptQuest, SmoothBackground)
 		*   SkillList(int[])
@@ -334,6 +385,7 @@ public class DarkSpiritOrb
 	/// </summary>
 	public void ConfigureBotOptions(string PlayerName = "Bot By AuQW", string GuildName = "https://auqw.tk/", bool LagKiller = true, bool SafeTimings = true, bool RestPackets = true, bool AutoRelogin = true, bool PrivateRooms = false, bool InfiniteRange = true, bool SkipCutscenes = true, bool ExitCombatBeforeQuest = true)
 	{
+		bot.SendClientPacket("%xt%moderator%-1%AuQW: Configuring bot.%");
 		bot.Options.CustomName = PlayerName;
 		bot.Options.CustomGuild = GuildName;
 		bot.Options.LagKiller = LagKiller;
@@ -349,16 +401,39 @@ public class DarkSpiritOrb
 	}
 
 	/// <summary>
+	/// Gets AQLite Functions
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="optionName"></param>
+	/// <returns></returns>
+	public T GetLite<T>(string optionName)
+	{
+		return bot.GetGameObject<T>($"litePreference.data.{optionName}");
+	}
+
+	/// <summary>
+	/// Sets AQLite Functions
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="optionName"></param>
+	/// <param name="value"></param>
+	public void SetLite<T>(string optionName, T value)
+	{
+		bot.SetGameObject($"litePreference.data.{optionName}", value);
+	}
+
+	/// <summary>
 	/// Allows you to turn on and off AQLite functions.
 	/// Recommended Default Bot Configurations.
 	/// </summary>
-	public void ConfigureLiteSettings(bool UntargetSelf = true, bool UntargetDead = true, bool CustomDrops = false, bool ReacceptQuest = false, bool SmoothBackground = true)
+	public void ConfigureLiteSettings(bool UntargetSelf = true, bool UntargetDead = true, bool CustomDrops = false, bool ReacceptQuest = false, bool SmoothBackground = true, bool Debugger = false)
 	{
-		bot.Lite.Set("bUntargetSelf", UntargetSelf);
-		bot.Lite.Set("bUntargetDead", UntargetDead);
-		bot.Lite.Set("bCustomDrops", CustomDrops);
-		bot.Lite.Set("bReaccept", ReacceptQuest);
-		bot.Lite.Set("bSmoothBG", SmoothBackground);
+		SetLite("bUntargetSelf", UntargetSelf);
+		SetLite("bUntargetDead", UntargetDead);
+		SetLite("bCustomDrops", CustomDrops);
+		SetLite("bReaccept", ReacceptQuest);
+		SetLite("bSmoothBG", SmoothBackground);
+		SetLite("bDebugger", Debugger);
 	}
 
 	/// <summary>
@@ -407,18 +482,23 @@ public class DarkSpiritOrb
 	/// <summary>
 	/// Equips all items in an array.
 	/// </summary>
+	/// <param name="EquipList"></param>
 	public void EquipList(params string[] EquipList)
 	{
 		foreach (var Item in EquipList)
 		{
-			SafeEquip(Item);
+			if (bot.Inventory.Contains(Item))
+			{
+				SafeEquip(Item);
+			}
 		}
 	}
 
 	/// <summary>
 	/// Unbanks all items in an array after banking every other AC-tagged Misc item in the inventory.
 	/// </summary>
-	public void UnbankList(params string[] BankItems)
+	/// <param name="UnbankList"></param>
+	public void UnbankList(params string[] UnbankList)
 	{
 		if (bot.Player.Cell != "Wait") bot.Player.Jump("Wait", "Spawn");
 		while (bot.Player.State == 2) { }
@@ -427,11 +507,45 @@ public class DarkSpiritOrb
 		foreach (var item in bot.Inventory.Items)
 		{
 			if (!Whitelisted.Contains(item.Category.ToString())) continue;
-			if (item.Name != "Treasure Potion" && item.Coins && !Array.Exists(BankItems, x => x == item.Name)) bot.Inventory.ToBank(item.Name);
+			if (item.Name != "Treasure Potion" && item.Coins && !Array.Exists(UnbankList, x => x == item.Name)) bot.Inventory.ToBank(item.Name);
 		}
-		foreach (var item in BankItems)
+		foreach (var item in UnbankList)
 		{
 			if (bot.Bank.Contains(item)) bot.Bank.ToInventory(item);
 		}
+	}
+
+	/// <summary>
+	/// Checks the amount of space you need from an array's length/set amount.
+	/// </summary>
+	/// <param name="UnbankList"></param>
+	public void CheckSpace(params string[] UnbankList)
+	{
+		int MaxSpace = bot.GetGameObject<int>("world.myAvatar.objData.iBagSlots");
+		int FilledSpace = bot.GetGameObject<int>("world.myAvatar.items.length");
+		int EmptySpace = MaxSpace - FilledSpace;
+		int SpaceNeeded = 0;
+
+		foreach (var Item in UnbankList)
+		{
+			if (!bot.Inventory.Contains(Item)) SpaceNeeded++;
+		}
+
+		if (EmptySpace < SpaceNeeded)
+		{
+			StopBot($"Need {SpaceNeeded} empty inventory slots, please make room for the quest.", bot.Map.Name, bot.Player.Cell, bot.Player.Pad, "Error");
+		}
+	}
+
+	/// <summary>
+	/// Sends a message packet to client in chat.
+	/// </summary>
+	/// <param name="Message"></param>
+	/// <param name="Name"></param>
+	/// <param name="MessageType">moderator, warning, server, event, guild, zone, whisper</param>
+	public void SendMSGPacket(string Message = " ", string Name = "SERVER", string MessageType = "zone")
+	{
+		// bot.SendClientPacket($"%xt%{MessageType}%-1%{Name}: {Message}%");
+		bot.SendClientPacket($"%xt%chatm%0%{MessageType}~{Message}%{Name}%");
 	}
 }
