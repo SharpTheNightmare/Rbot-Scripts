@@ -1,7 +1,6 @@
 ﻿using System;
 using RBot;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
 public class NulgathLarvae
 {
@@ -20,7 +19,8 @@ public class NulgathLarvae
 		"Voucher of Nulgath (non-mem)",
 		"Totem of Nulgath",
 		"Gem of Nulgath",
-		"Blood Gem of the Archfiend"
+		"Blood Gem of the Archfiend",
+		"Mana Energy for Nulgath"
 	};
 	public string[] EquippedItems = { };
 	//-----------EDIT ABOVE-------------//
@@ -45,8 +45,8 @@ public class NulgathLarvae
 		while (!bot.ShouldExit())
 		{
 			while (!bot.Player.Loaded) { }
-			HuntItemFarm("Mana Energy for Nulgath", 1, "Elemental", false, 2566, "Mana Golem");
-			TempItemFarm("Charged Mana for Nulgath", 5, "Elemental", "r3", "Up", 2566);
+			HuntItemFarm("Mana Energy for Nulgath", 1, "elemental", false, 2566, "Mana Golem");
+			ItemFarm("Charged Mana Energy for Nulgath", 5, "elemental", "r3", "Up", true, 2566);
 			SafeQuestComplete(2566);
 		}
 		bot.Log($"[{DateTime.Now:HH:mm:ss}] Script stopped successfully.");
@@ -58,24 +58,25 @@ public class NulgathLarvae
 	------------------------------------------------------------------------------------------------------------*/
 
 	/*
-		*   These functions are used to perform a major action in AQW.
-		*   All of them require at least one of the Auxiliary Functions listed below to be present in your script.
-		*   Some of the functions require you to pre-declare certain integers under "public class Script"
-		*   InvItemFarm and TempItemFarm will require some Background Functions to be present as well.
-		*   All of this information can be found inside the functions. Make sure to read.
-		*   InvItemFarm("ItemName", ItemQuantity, "MapName", "MapNumber", "CellName", "PadName", QuestID, "MonsterName");
-		*   TempItemFarm("TempItemName", TempItemQuantity, "MapName", "MapNumber", "CellName", "PadName", QuestID, "MonsterName");
-		*   SafeEquip("ItemName");
-		*   SafePurchase("ItemName", ItemQuantityNeeded, "MapName", "MapNumber", ShopID)
+		*	These functions are used to perform a major action in AQW.
+		*	All of them require at least one of the Auxiliary Functions listed below to be present in your script.
+		*	Some of the functions require you to pre-declare certain integers under "public class Script"
+		*	ItemFarm, MultiQuestFarm and HuntItemFarm will require some Background Functions to be present as well.
+		*	All of this information can be found inside the functions. Make sure to read.
+		*	ItemFarm("ItemName", ItemQuantity, "MapName", "MapNumber", "CellName", "PadName", Temporary, QuestID, "MonsterName");
+		*	MultiQuestFarm("MapName", "CellName", "PadName", QuestList[], "MonsterName");
+		*	HuntItemFarm("ItemName", ItemQuantity, "MapName", Temporary, QuestID, "MonsterName");
+		*	SafeEquip("ItemName");
+		*	SafePurchase("ItemName", ItemQuantityNeeded, "MapName", "MapNumber", ShopID)
 		*	SafeSell("ItemName", ItemQuantityNeeded)
 		*	SafeQuestComplete(QuestID, ItemID)
-		*	StopBot ("Text", "MapName", "MapNumber", "CellName", "PadName")
+		*	StopBot ("Text", "MapName", "MapNumber", "CellName", "PadName", "Caption")
 	*/
 
 	/// <summary>
 	/// Farms you the specified quantity of the specified item with the specified quest accepted from specified monsters in the specified location. Saves States every ~5 minutes.
 	/// </summary>
-	public void InvItemFarm(string ItemName, int ItemQuantity, string MapName, string CellName, string PadName, int QuestID = 0, string MonsterName = "*")
+	public void ItemFarm(string ItemName, int ItemQuantity, string MapName, string CellName, string PadName, bool Temporary = false, int QuestID = 0, string MonsterName = "*")
 	{
 	/*
 		*   Must have the following functions in your script:
@@ -103,22 +104,38 @@ public class NulgathLarvae
 		goto startFarmLoop;
 
 	maintainFarmLoop:
-		while (!bot.Inventory.Contains(ItemName, ItemQuantity))
+		if (Temporary)
 		{
-			FarmLoop++;
-			if (bot.Map.Name != MapName) SafeMapJoin(MapName, CellName, PadName);
-			if (bot.Player.Cell != CellName) bot.Player.Jump(CellName, PadName);
-			if (QuestID > 0) bot.Quests.EnsureAccept(QuestID);
-			bot.Options.AggroMonsters = true;
-			bot.Player.Attack(MonsterName);
-			if (FarmLoop > SaveStateLoops) goto breakFarmLoop;
+			while (!bot.Inventory.ContainsTempItem(ItemName, ItemQuantity))
+			{
+				FarmLoop++;
+				if (bot.Map.Name != MapName) SafeMapJoin(MapName, CellName, PadName);
+				if (bot.Player.Cell != CellName) bot.Player.Jump(CellName, PadName);
+				if (QuestID > 0) bot.Quests.EnsureAccept(QuestID);
+				bot.Options.AggroMonsters = true;
+				bot.Player.Attack(MonsterName);
+				if (FarmLoop > SaveStateLoops) goto breakFarmLoop;
+			}
+		}
+		else
+		{
+			while (!bot.Inventory.Contains(ItemName, ItemQuantity))
+			{
+				FarmLoop++;
+				if (bot.Map.Name != MapName) SafeMapJoin(MapName, CellName, PadName);
+				if (bot.Player.Cell != CellName) bot.Player.Jump(CellName, PadName);
+				if (QuestID > 0) bot.Quests.EnsureAccept(QuestID);
+				bot.Options.AggroMonsters = true;
+				bot.Player.Attack(MonsterName);
+				if (FarmLoop > SaveStateLoops) goto breakFarmLoop;
+			}
 		}
 	}
 
 	/// <summary>
-	/// Farms you the required quantity of the specified temp item with the specified quest accepted from specified monsters in the specified location. Saves States every ~5 minutes.
+	/// Farms all the quests in a given string, must all be farmable in the same room and cell.
 	/// </summary>
-	public void TempItemFarm(string TempItemName, int TempItemQuantity, string MapName, string CellName, string PadName, int QuestID = 0, string MonsterName = "*")
+	public void MultiQuestFarm(string MapName, string CellName, string PadName, int[] QuestList, string MonsterName = "*")
 	{
 	/*
 		*   Must have the following functions in your script:
@@ -146,16 +163,17 @@ public class NulgathLarvae
 		goto startFarmLoop;
 
 	maintainFarmLoop:
-		while (!bot.Inventory.ContainsTempItem(TempItemName, TempItemQuantity))
+		FarmLoop++;
+		if (bot.Map.Name != MapName) SafeMapJoin(MapName, CellName, PadName);
+		if (bot.Player.Cell != CellName) bot.Player.Jump(CellName, PadName);
+		foreach (var Quest in QuestList)
 		{
-			FarmLoop++;
-			if (bot.Map.Name != MapName) SafeMapJoin(MapName, CellName, PadName);
-			if (bot.Player.Cell != CellName) bot.Player.Jump(CellName, PadName);
-			if (QuestID > 0) bot.Quests.EnsureAccept(QuestID);
-			bot.Options.AggroMonsters = true;
-			bot.Player.Attack(MonsterName);
-			if (FarmLoop > SaveStateLoops) goto breakFarmLoop;
+			if (!bot.Quests.IsInProgress(Quest)) bot.Quests.EnsureAccept(Quest);
+			if (bot.Quests.CanComplete(Quest)) SafeQuestComplete(Quest);
 		}
+		bot.Options.AggroMonsters = true;
+		bot.Player.Attack(MonsterName);
+		if (FarmLoop > SaveStateLoops) goto breakFarmLoop;
 	}
 
 	/// <summary>
@@ -270,14 +288,13 @@ public class NulgathLarvae
 	}
 
 	/// <summary>
-	/// Attempts to complete the quest thrice. If it fails to complete, logs out. If it successfully completes, re-accepts the quest and checks if it can be completed again.
+	/// Attempts to complete the quest with the set amount of {TurnInAttempts}. If it fails to complete, logs out. If it successfully completes, re-accepts the quest and checks if it can be completed again.
 	/// </summary>
 	public void SafeQuestComplete(int QuestID, int ItemID = -1)
 	{
-	//Must have the following functions in your script:
-	//ExitCombat
+		//Must have the following functions in your script:
+		//ExitCombat
 
-	maintainCompleteLoop:
 		ExitCombat();
 		bot.Quests.EnsureAccept(QuestID);
 		bot.Quests.EnsureComplete(QuestID, ItemID, tries: TurnInAttempts);
@@ -287,15 +304,13 @@ public class NulgathLarvae
 			bot.Player.Logout();
 		}
 		bot.Log($"[{DateTime.Now:HH:mm:ss}] Turned In Quest {QuestID} successfully.");
-		bot.Quests.EnsureAccept(QuestID);
-		bot.Sleep(1000);
-		if (bot.Quests.CanComplete(QuestID)) goto maintainCompleteLoop;
+		while (!bot.Quests.IsInProgress(QuestID)) bot.Quests.EnsureAccept(QuestID);
 	}
 
 	/// <summary>
 	/// Stops the bot at yulgar if no parameters are set, or your specified map if the parameters are set.
 	/// </summary>
-	public void StopBot(string Text = "Bot stopped successfully.", string MapName = "yulgar", string CellName = "Enter", string PadName = "Spawn", string Caption = "Stopped")
+	public void StopBot(string Text = "Bot stopped successfully.", string MapName = "yulgar", string CellName = "Enter", string PadName = "Spawn", string Caption = "Stopped", string MessageType = "event")
 	{
 		//Must have the following functions in your script:
 		//SafeMapJoin
@@ -307,8 +322,7 @@ public class NulgathLarvae
 		bot.Options.AggroMonsters = false;
 		bot.Log($"[{DateTime.Now:HH:mm:ss}] Bot stopped successfully.");
 		Console.WriteLine(Text);
-		MessageBox.Show(Text, Caption);
-		bot.Exit();
+		SendMSGPacket(Text, Caption, MessageType);
 		ScriptManager.StopScript();
 	}
 
@@ -340,7 +354,7 @@ public class NulgathLarvae
 	/// </summary>
 	public void SmartSaveState()
 	{
-		bot.SendPacket("%xt%zm%whisper%1% creating save state%" + bot.Player.Username + "%");
+		bot.SendPacket("%xt%zm%whisper%1%creating save state%" + bot.Player.Username + "%");
 		bot.Log($"[{DateTime.Now:HH:mm:ss}] Successfully Saved State.");
 	}
 
@@ -383,12 +397,14 @@ public class NulgathLarvae
 		*   Some Invokable Functions may call or require the assistance of some Background Functions as well.
 		*   These functions are to be run at the very beginning of the bot under public class Script.
 		*   ConfigureBotOptions("PlayerName", "GuildName", LagKiller, SafeTimings, RestPackets, AutoRelogin, PrivateRooms, InfiniteRange, SkipCutscenes, ExitCombatBeforeQuest)
-		*   ConfigureLiteSettings(UntargetSelf, UntargetDead, CustomDrops, ReacceptQuest, SmoothBackground)
+		*   ConfigureLiteSettings(UntargetSelf, UntargetDead, CustomDrops, ReacceptQuest, SmoothBackground, Debugger)
 		*   SkillList(int[])
 		*   GetDropList(string[])
 		*   ItemWhiteList(string[])
 		*   EquipList(string[])
 		*   UnbankList(string[])
+		*   CheckSpace(string[])
+		*   SendMSGPacket("Message", "Name", "MessageType")
 	*/
 
 	/// <summary>
@@ -530,22 +546,22 @@ public class NulgathLarvae
 	/// <summary>
 	/// Checks the amount of space you need from an array's length/set amount.
 	/// </summary>
-	/// <param name="UnbankList"></param>
-	public void CheckSpace(params string[] UnbankList)
+	/// <param name="ItemList"></param>
+	public void CheckSpace(params string[] ItemList)
 	{
 		int MaxSpace = bot.GetGameObject<int>("world.myAvatar.objData.iBagSlots");
 		int FilledSpace = bot.GetGameObject<int>("world.myAvatar.items.length");
 		int EmptySpace = MaxSpace - FilledSpace;
 		int SpaceNeeded = 0;
 
-		foreach (var Item in UnbankList)
+		foreach (var Item in ItemList)
 		{
 			if (!bot.Inventory.Contains(Item)) SpaceNeeded++;
 		}
 
 		if (EmptySpace < SpaceNeeded)
 		{
-			StopBot($"Need {SpaceNeeded} empty inventory slots, please make room for the quest.", bot.Map.Name, bot.Player.Cell, bot.Player.Pad, "Error");
+			StopBot($"Need {SpaceNeeded} empty inventory slots, please make room for the quest.", bot.Map.Name, bot.Player.Cell, bot.Player.Pad, "Error", "moderator");
 		}
 	}
 
